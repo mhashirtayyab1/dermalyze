@@ -1,0 +1,25 @@
+{
+  "diseases": [
+    {
+      "id": 1,
+      "name": "Eczema",
+      "confidence": "92%",
+      "symptoms": "Red, itchy, and inflamed skin patches.",
+      "remedy": "Use moisturizers and avoid harsh soaps."
+    },
+    {
+      "id": 2,
+      "name": "Psoriasis",
+      "confidence": "85%",
+      "symptoms": "Silvery scales and red patches on the skin.",
+      "remedy": "Consult a dermatologist for topical steroids."
+    },
+    {
+      "id": 3,
+      "name": "Acne",
+      "confidence": "98%",
+      "symptoms": "Pimples, blackheads, and oily skin.",
+      "remedy": "Keep skin clean and use salicylic acid products."
+    }
+  ]
+}
