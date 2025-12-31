@@ -511,7 +511,7 @@ footer { background: var(--bg-card); border-top: 1px solid var(--border); paddin
 @media (max-width: 425px) {
   /* Fix Padding & Margins from Borders */
   .container { padding: 0 16px; } /* Give space from edges */
-  
+  .hero { padding-top: 80px; }   
   /* Navbar */
   .navbar-pill { width: 95%; padding: 8px 12px 8px 20px; }
   .logo { font-size: 1.2rem; }
@@ -547,7 +547,7 @@ footer { background: var(--bg-card); border-top: 1px solid var(--border); paddin
 @media (max-width: 375px) {
   /* Tighter margins for narrow screens */
   .container { padding: 0 12px; }
-  
+   .hero { padding-top: 80px; }  
   .hero h1 { font-size: 1.8rem; }
   .hero p { font-size: 0.95rem; text-align: center; }
   
