@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'; 
-import { auth, googleProvider } from './firebase'; // Make sure firebase.js is configured
+import { auth, googleProvider } from './firebase'; 
 import { 
   signInWithPopup, 
   signInWithEmailAndPassword, 
@@ -10,8 +10,7 @@ import {
   onAuthStateChanged 
 } from "firebase/auth";
 
-// --- IMPORT IMAGES (Using URLs for demo to work immediately) ---
-// Remove these and use your local imports if you prefer: import sirsubhanImg from './pic/sirsubhan.png';
+// --- IMPORT IMAGES ---
 const sirsubhanImg = "https://ui-avatars.com/api/?name=Subhan+Arif&background=10B981&color=fff";
 const mambushraImg = "https://ui-avatars.com/api/?name=Bushra&background=6366F1&color=fff";
 const hashirImg = "https://ui-avatars.com/api/?name=Hashir&background=random";
@@ -20,11 +19,9 @@ const noorImg = "https://ui-avatars.com/api/?name=Noor&background=random";
 const madihaImg = "https://ui-avatars.com/api/?name=Madiha&background=random";
 const uswaImg = "https://ui-avatars.com/api/?name=Uswa&background=random";
 const rabiaImg = "https://ui-avatars.com/api/?name=Rabia&background=random";
-
-// --- HERO IMAGE (Skin) ---
 const heroSkinImg = "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
 
-// --- ICONS (SVG Components) ---
+// --- ICONS ---
 const Icons = {
   Sun: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>,
   Moon: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
@@ -32,31 +29,89 @@ const Icons = {
   Loader: () => <div className="loader-spin"></div>,
   Close: () => <svg width="20" height="20" stroke="currentColor" fill="none" viewBox="0 0 24 24" strokeWidth="2"><path d="M6 18L18 6M6 6l12 12"/></svg>,
   Google: () => <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>,
-  Warning: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+  Warning: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>,
+  Info: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>,
+  Leaf: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>,
+  Pill: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>,
+  UserMd: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M8 21h8m-4-4v4"/></svg>
 };
 
-// --- HELPER: PARSE AI TEXT ---
-const parseRecommendations = (text) => {
-  const sections = [];
-  const disclaimerMatch = text.match(/(Disclaimer:.*?)$/im); 
-  const disclaimer = disclaimerMatch ? disclaimerMatch[0] : null;
-  const regex = /(\d+\.\s+\*\*(.*?)\*\*:)\s*([\s\S]*?)(?=\d+\.\s+\*\*|$)/g;
-  let match;
+// --- ROBUST HELPER: PARSE JSON RECOMMENDATIONS ---
+const parseRecommendations = (jsonString, prediction) => {
+  // 1. Check if string exists
+  if (!jsonString) return { disclaimer: "", sections: [] };
 
-  while ((match = regex.exec(text)) !== null) {
-    const title = match[2];
-    const content = match[3].trim();
-    const bullets = content.split('-').map(item => item.trim()).filter(item => item.length > 0);
-    sections.push({ title, bullets });
+  let cleanString = jsonString.trim();
+  let disclaimer = "";
+  const sections = [];
+
+  try {
+    // 2. BULLETPROOF EXTRACTION:
+    // Instead of relying on regex which might fail on weird spacing, 
+    // we find the FIRST '{' and the LAST '}' in the string.
+    const firstBrace = cleanString.indexOf('{');
+    const lastBrace = cleanString.lastIndexOf('}');
+
+    if (firstBrace === -1 || lastBrace === -1) {
+      console.warn("No JSON object found in recommendations string");
+      return { disclaimer: "", sections: [] };
+    }
+
+    // Slice strictly between the first { and last }
+    cleanString = cleanString.substring(firstBrace, lastBrace + 1);
+
+    // 3. Parse JSON
+    const data = JSON.parse(cleanString);
+
+    // 4. Extract Disclaimer (if separate)
+    if (data.disclaimer) {
+      disclaimer = data.disclaimer;
+    }
+
+    // 5. Find the key matching the prediction
+    // e.g., "BA- impetigo" matches key "impetigo"
+    const diseaseKey = Object.keys(data).find(key => prediction.includes(key));
+
+    if (!diseaseKey) {
+      console.warn("Could not match prediction to JSON key");
+      return { disclaimer, sections };
+    }
+
+    const diseaseData = data[diseaseKey];
+
+    // 6. Helper to create section object
+    const addSection = (title, content) => {
+      if (content) {
+        let bullets = [];
+        if (Array.isArray(content)) {
+          bullets = content;
+        } else if (typeof content === 'string') {
+          bullets = [content];
+        }
+        sections.push({ title, bullets });
+      }
+    };
+
+    // 7. Map backend keys to frontend cards
+    addSection("Brief Overview", diseaseData.brief_overview);
+    addSection("Home Remedies", diseaseData.home_remedies);
+    addSection("Over-the-Counter (OTC) Medicines", diseaseData.otc_medicines);
+    addSection("When to See a Doctor", diseaseData.when_to_see_a_doctor);
+
+    return { disclaimer, sections };
+
+  } catch (error) {
+    console.error("Error parsing recommendations JSON:", error);
+    return { disclaimer, sections };
   }
-  return { disclaimer, sections };
 };
 
 // --- COMPONENT: TYPEWRITER EFFECT ---
-function TypewriterText({ text, delay = 10 }) {
+function TypewriterText({ text, delay = 5 }) {
   const [displayedText, setDisplayedText] = useState("");
 
   useEffect(() => {
+    setDisplayedText(""); 
     let index = 0;
     const interval = setInterval(() => {
       setDisplayedText((prev) => prev + text.charAt(index));
@@ -69,8 +124,7 @@ function TypewriterText({ text, delay = 10 }) {
   return <span>{displayedText}</span>;
 }
 
-// --- COMPONENTS ---
-
+// --- TOAST ---
 function Toast({ message, type, onClose }) {
   useEffect(() => {
     const timer = setTimeout(onClose, 3000);
@@ -85,7 +139,7 @@ function Toast({ message, type, onClose }) {
   );
 }
 
-// --- AUTH MODAL COMPONENT ---
+// --- AUTH MODAL ---
 function AuthModal({ isOpen, onClose, onLoginSuccess, showToast }) {
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
@@ -99,7 +153,6 @@ function AuthModal({ isOpen, onClose, onLoginSuccess, showToast }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (mode === 'signup') {
         await createUserWithEmailAndPassword(auth, email, password);
@@ -110,7 +163,6 @@ function AuthModal({ isOpen, onClose, onLoginSuccess, showToast }) {
       }
       onClose();
     } catch (error) {
-      console.error(error);
       showToast(error.message.replace("Firebase: ", ""), "error");
     } finally {
       setLoading(false);
@@ -187,7 +239,7 @@ function Navbar({ handleStartAnalysis }) {
   );
 }
 
-// --- UPDATED HERO WITH SCANNER ---
+// --- HERO ---
 function Hero({ handleStartAnalysis }) {
   return (
     <section className="hero container flex">
@@ -201,16 +253,12 @@ function Hero({ handleStartAnalysis }) {
           <a href="#how-it-works" className="btn btn-outline">How It Works</a>
         </div>
       </div>
-      
-      {/* --- SCANNER EFFECT HERO CARD --- */}
       <div className="hero-visual">
         <div className="hero-card scanner-wrapper">
           <div className="scan-overlay"></div>
           <div className="scan-line"></div>
           <div className="scan-glow-top"></div>
-          
           <img src={heroSkinImg} alt="Skin Analysis" className="scan-target-img" />
-          
           <div className="status-box">
             <div className="flex justify-between items-center">
               <span style={{fontWeight: 700}}>Status: Healthy</span>
@@ -280,7 +328,7 @@ function ProjectDetails() {
   );
 }
 
-// --- TEAM COMPONENT ---
+// --- TEAM ---
 function Team() {
   const instructors = [
     { name: "Sir Subhan Arif", role: "Project Instructor", img: sirsubhanImg },
@@ -336,7 +384,7 @@ function Team() {
   );
 }
 
-// --- UPDATED ANALYSIS PAGE ---
+// --- ANALYSIS PAGE ---
 function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) {
   const [step, setStep] = useState('upload');
   const [file, setFile] = useState(null);
@@ -345,7 +393,7 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
   const [symptoms, setSymptoms] = useState("");
   const [parsedRecs, setParsedRecs] = useState(null);
 
-  const BACKEND_URL = "https://mhashirtayyab-dermalyze-backend.hf.space";
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8000';
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -401,12 +449,12 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
         setResult({
           name: cleanName,
           rawPrediction: data.prediction,
-          confidence: parseFloat(data.confidence.replace('%', '')),
+          confidence: data.confidence, 
           recommendations: data.recommendations,
           image: preview
         });
 
-        const parsed = parseRecommendations(data.recommendations);
+        const parsed = parseRecommendations(data.recommendations, data.prediction);
         setParsedRecs(parsed);
 
         setStep('result');
@@ -420,12 +468,6 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
       showToast(error.message || "Connection Error. Is backend running?", "error");
       setStep('upload');
     }
-  };
-
-  const getConfidenceColor = (score) => {
-    if (score >= 80) return 'var(--success)';
-    if (score >= 50) return '#F59E0B';
-    return 'var(--danger)';
   };
 
   return (
@@ -471,14 +513,12 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
 
         {step === 'processing' && (
           <div className="processing-wrapper">
-            {/* --- SCANNER EFFECT ON USER IMAGE --- */}
             <div className="scanner-wrapper processing-scanner">
               <div className="scan-overlay"></div>
               <div className="scan-line"></div>
               <div className="scan-glow-top"></div>
               <img src={preview} alt="Scanning" className="scan-target-img processing-img" />
             </div>
-            
             <div className="text-center" style={{marginTop: '30px'}}>
               <h3>Analyzing with AI...</h3>
               <p style={{color: 'var(--text-muted)'}}>Consulting medical database & neural networks...</p>
@@ -488,7 +528,7 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
 
         {step === 'result' && result && (
           <div className="result-area active">
-            <div className="flex gap-4" style={{marginBottom: '30px', alignItems: 'center'}}>
+            <div className="flex gap-4" style={{marginBottom: '30px', alignItems: 'center', flexWrap: 'wrap'}}>
               <img src={result.image} alt="Result" style={{width: '120px', height: '120px', objectFit: 'cover', borderRadius: '16px'}} />
               <div>
                 <div className="badge" style={{marginBottom: '10px', background: result.confidence > 80 ? 'var(--success)' : 'var(--warning)', color: 'white'}}>
@@ -503,37 +543,42 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
               <div className="progress-fill" style={{width: `${result.confidence}%`, background: result.confidence > 80 ? 'var(--success)' : 'var(--warning)'}}></div>
             </div>
 
-            <div style={{maxWidth: '800px', margin: '0 auto'}}>
-              
+            <div style={{maxWidth: '900px', margin: '0 auto'}}>
               {parsedRecs && parsedRecs.disclaimer && (
                 <div className="disclaimer-box">
-                  <small>⚠️ {parsedRecs.disclaimer.replace('Disclaimer:', '')}</small>
+                  <small>⚠️ {parsedRecs.disclaimer}</small>
                 </div>
               )}
 
-              {parsedRecs ? (
+              {parsedRecs && parsedRecs.sections.length > 0 ? (
                 <div className="rec-cards-grid">
-                  {parsedRecs.sections.map((section, idx) => {
-                    const isRedFlag = section.title.toLowerCase().includes('red flag');
-                    let cardClass = "rec-card";
-                    if (isRedFlag) cardClass += " rec-card-red";
-                    else if (section.title.includes('Home')) cardClass += " rec-card-green";
-                    else if (section.title.includes('Over')) cardClass += " rec-card-purple";
-                    else cardClass += " rec-card-blue";
-
+                  {[
+                    { label: 'Brief Overview', type: 'blue', icon: <Icons.Info /> },
+                    { label: 'Home Remedies', type: 'green', icon: <Icons.Leaf /> },
+                    { label: 'Over-the-Counter (OTC) Medicines', type: 'purple', icon: <Icons.Pill /> },
+                    { label: 'When to See a Doctor', type: 'red', icon: <Icons.UserMd /> }
+                  ].map((cat, idx) => {
+                    const section = parsedRecs.sections.find(s => s.title.includes(cat.label));
+                    
                     return (
-                      <div key={idx} className={`glass-card ${cardClass}`}>
+                      <div key={idx} className={`glass-card rec-card rec-card-${cat.type}`}>
                         <h4 style={{display:'flex', alignItems:'center', gap:'10px', marginBottom:'15px'}}>
-                          {isRedFlag && <Icons.Warning />}
-                          {section.title}
+                          {cat.icon} {cat.label}
                         </h4>
-                        <ul>
-                          {section.bullets.map((bullet, bIdx) => (
-                            <li key={bIdx} style={{marginBottom:'10px', lineHeight:1.6}}>
-                              <TypewriterText text={bullet} delay={5} />
-                            </li>
-                          ))}
-                        </ul>
+                        
+                        {section && section.bullets.length > 0 ? (
+                          <ul>
+                            {section.bullets.map((bullet, bIdx) => (
+                              <li key={bIdx} style={{marginBottom:'10px', lineHeight:1.6}}>
+                                <TypewriterText text={bullet} delay={5} />
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="no-recommendation-msg">
+                            No specific recommendations provided.
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -604,8 +649,7 @@ function Footer({ user }) {
   );
 }
 
-// --- MAIN APP COMPONENT ---
-
+// --- MAIN APP ---
 function App() {
   const [theme, setTheme] = useState('light');
   const [user, setUser] = useState(null);
