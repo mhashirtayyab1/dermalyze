@@ -345,7 +345,7 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
   const [symptoms, setSymptoms] = useState("");
   const [parsedRecs, setParsedRecs] = useState(null);
 
-  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL';
+  const BACKEND_URL = "https://mhashirtayyab-dermalyze-backend.hf.space";
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
