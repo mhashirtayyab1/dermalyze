@@ -36,40 +36,32 @@ const Icons = {
   UserMd: () => <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M8 21h8m-4-4v4"/></svg>
 };
 
-// --- ROBUST HELPER: PARSE JSON RECOMMENDATIONS ---
+// --- HELPER: PARSE JSON RECOMMENDATIONS ---
 const parseRecommendations = (jsonString, prediction) => {
-  // 1. Check if string exists
   if (!jsonString) return { disclaimer: "", sections: [] };
 
-  let cleanString = jsonString.trim();
+  // Extract strictly between first { and last }
+  const cleanString = jsonString.trim();
+  const firstBrace = cleanString.indexOf('{');
+  const lastBrace = cleanString.lastIndexOf('}');
+
+  if (firstBrace === -1 || lastBrace === -1) {
+    console.warn("No JSON object found in recommendations string");
+    return { disclaimer: "", sections: [] };
+  }
+
+  const jsonStringOnly = cleanString.substring(firstBrace, lastBrace + 1);
+
   let disclaimer = "";
   const sections = [];
 
   try {
-    // 2. BULLETPROOF EXTRACTION:
-    // Instead of relying on regex which might fail on weird spacing, 
-    // we find the FIRST '{' and the LAST '}' in the string.
-    const firstBrace = cleanString.indexOf('{');
-    const lastBrace = cleanString.lastIndexOf('}');
+    const data = JSON.parse(jsonStringOnly);
 
-    if (firstBrace === -1 || lastBrace === -1) {
-      console.warn("No JSON object found in recommendations string");
-      return { disclaimer: "", sections: [] };
-    }
-
-    // Slice strictly between the first { and last }
-    cleanString = cleanString.substring(firstBrace, lastBrace + 1);
-
-    // 3. Parse JSON
-    const data = JSON.parse(cleanString);
-
-    // 4. Extract Disclaimer (if separate)
     if (data.disclaimer) {
       disclaimer = data.disclaimer;
     }
 
-    // 5. Find the key matching the prediction
-    // e.g., "BA- impetigo" matches key "impetigo"
     const diseaseKey = Object.keys(data).find(key => prediction.includes(key));
 
     if (!diseaseKey) {
@@ -79,7 +71,6 @@ const parseRecommendations = (jsonString, prediction) => {
 
     const diseaseData = data[diseaseKey];
 
-    // 6. Helper to create section object
     const addSection = (title, content) => {
       if (content) {
         let bullets = [];
@@ -92,7 +83,6 @@ const parseRecommendations = (jsonString, prediction) => {
       }
     };
 
-    // 7. Map backend keys to frontend cards
     addSection("Brief Overview", diseaseData.brief_overview);
     addSection("Home Remedies", diseaseData.home_remedies);
     addSection("Over-the-Counter (OTC) Medicines", diseaseData.otc_medicines);
@@ -338,7 +328,7 @@ function Team() {
     { name: "Muhammad Hashir Tayyab", rollNo: "Sr. 405", img: hashirImg },
     { name: "Muhammad Fareed ud din", rollNo: "Sr. 407", img: fareedImg },
     { name: "Noor Fatima", rollNo: "Sr. 406", img: noorImg },
-    { name: "Madiha Noor", rollNo: "Sr. 430", img: madihaImg },
+    { name: "Madiha Noor", rollNo: "Sr. 431", img: madihaImg },
     { name: "Uswa Imran", rollNo: "Sr. 437", img: uswaImg },
     { name: "Rabia Shabir", rollNo: "Sr. 424", img: rabiaImg }
   ];
@@ -384,7 +374,7 @@ function Team() {
   );
 }
 
-// --- ANALYSIS PAGE ---
+// --- UPDATED ANALYSIS PAGE ---
 function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) {
   const [step, setStep] = useState('upload');
   const [file, setFile] = useState(null);
@@ -531,17 +521,15 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
             <div className="flex gap-4" style={{marginBottom: '30px', alignItems: 'center', flexWrap: 'wrap'}}>
               <img src={result.image} alt="Result" style={{width: '120px', height: '120px', objectFit: 'cover', borderRadius: '16px'}} />
               <div>
-                <div className="badge" style={{marginBottom: '10px', background: result.confidence > 80 ? 'var(--success)' : 'var(--warning)', color: 'white'}}>
-                  {result.confidence > 80 ? 'High Confidence' : 'Moderate Confidence'}
-                </div>
-                <h2 style={{fontSize: '1.8rem'}}>{result.name}</h2>
-                <p style={{color: 'var(--text-muted)'}}>{result.confidence}% Probability Match</p>
+                {/* REMOVED: Badge and Percentage Logic */}
+                <h1 style={{fontSize: '2.5rem', marginBottom: '10px'}}>{result.name}</h1>
+                {/* REMOVED: <div className="badge">...</div> */}
+                {/* REMOVED: <p>...% Match</p> */}
               </div>
             </div>
 
-            <div className="progress-bar" style={{marginBottom: '40px', height: '10px'}}>
-              <div className="progress-fill" style={{width: `${result.confidence}%`, background: result.confidence > 80 ? 'var(--success)' : 'var(--warning)'}}></div>
-            </div>
+            {/* REMOVED: Progress Bar */}
+            {/* <div className="progress-bar" style={{marginBottom: '40px', height: '10px'}}>...</div> */}
 
             <div style={{maxWidth: '900px', margin: '0 auto'}}>
               {parsedRecs && parsedRecs.disclaimer && (
@@ -550,7 +538,7 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
                 </div>
               )}
 
-              {parsedRecs && parsedRecs.sections.length > 0 ? (
+              {parsedRecs ? (
                 <div className="rec-cards-grid">
                   {[
                     { label: 'Brief Overview', type: 'blue', icon: <Icons.Info /> },
@@ -566,7 +554,7 @@ function AnalysisPage({ user, scansLeft, setScansLeft, showToast, onOpenAuth }) 
                           {cat.icon} {cat.label}
                         </h4>
                         
-                        {section && section.bullets.length > 0 ? (
+                        {section ? (
                           <ul>
                             {section.bullets.map((bullet, bIdx) => (
                               <li key={bIdx} style={{marginBottom:'10px', lineHeight:1.6}}>
